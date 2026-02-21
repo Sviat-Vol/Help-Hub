@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Реєстрація</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="logo">LOGO</div>
+      <nav class="nav">
+        <a href="#">Головна</a>
+        <a href="#">Зробити запит</a>
+        <a href="#">Мапа потреб</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="auth">
+      <div class="tabs">
+        <a class="tab active" href="/">Реєстрація</a>
+        <a class="tab" href="/login">Вхід</a>
+      </div>
+
+      <form class="form" method="post" action="/register" autocomplete="off">
+        <input name="surname" type="text" placeholder="Прізвище" required />
+        <input name="name" type="text" placeholder="Ім'я" required />
+        <input name="patronymic" type="text" placeholder="По-батькові" required />
+
+        <div class="gender-row">
+          <span>Gender:</span>
+          <label><input type="radio" name="gender" value="male" checked /> Male</label>
+          <label><input type="radio" name="gender" value="female" /> Female</label>
+        </div>
+
+        <div class="phone-row">
+          <select name="phone_code" required>
+            <option value="+380">+380 (UA)</option>
+            <option value="+1">+1 (US/CA)</option>
+            <option value="+44">+44 (UK)</option>
+            <option value="+49">+49 (DE)</option>
+            <option value="+33">+33 (FR)</option>
+            <option value="+48">+48 (PL)</option>
+          </select>
+          <input name="phone" type="tel" placeholder="Номер телефону" required />
+        </div>
+
+        <input name="email" type="email" placeholder="Поштова скринька   example@mail.com" required />
+        <input name="password" type="password" placeholder="Пароль" required />
+
+        <button type="submit" class="submit-btn">Створити акаунт</button>
+
+        {% if message %}
+          <p class="server-message">{{ message }}</p>
+        {% endif %}
+
+        <p class="terms">
+          Продовжуючи, ви погоджуєтеся з
+          <button type="button" class="terms-link" data-modal="terms-modal">Умовами використання</button>
+          та
+          <button type="button" class="terms-link" data-modal="privacy-modal">Політикою конфіденційності</button>.
+        </p>
+      </form>
+    </section>
+  </main>
+
+  {% if show_error_modal and errors %}
+  <div class="modal open" id="error-modal">
+    <div class="modal-content">
+      <h3>Перевірте введені дані</h3>
+      <ul class="error-list">
+        {% for error in errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+      <button type="button" class="modal-close">Зрозуміло</button>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="modal" id="terms-modal">
+    <div class="modal-content">
+      <h3>УМОВИ КОРИСТУВАННЯ сайтом «Volontier Map»</h3>
+      <p><strong>Останнє оновлення:</strong> 21 лютого 2026 року</p>
+      <p>... (залиши твій текст умов, який вже вставляли)</p>
+      <button type="button" class="modal-close">Закрити</button>
+    </div>
+  </div>
+
+  <div class="modal" id="privacy-modal">
+    <div class="modal-content">
+      <h3>ПОЛІТИКА КОНФІДЕНЦІЙНОСТІ сайту «Volontier Map»</h3>
+      <p><strong>Останнє оновлення:</strong> 21 лютого 2026 року</p>
+      <p>... (залиши твій текст політики, який вже вставляли)</p>
+      <button type="button" class="modal-close">Закрити</button>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
