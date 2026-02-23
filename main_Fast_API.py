@@ -12,6 +12,26 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 
+def render_template(
+    template_name: str,
+    request: Request,
+    *,
+    message: str = "",
+    errors: list[str] | None = None,
+    show_error_modal: bool = False,
+):
+    context = {
+        "request": request,
+        "message": message,
+        "errors": errors or [],
+        "show_error_modal": show_error_modal,
+        "form_data": {},
+    }
+    if template_name == "index.html":
+        context["users"] = get_users()
+    return templates.TemplateResponse(template_name, context)
+
+
 def _is_valid_email(email: str) -> bool:
     email_pattern = r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$"
     return bool(re.match(email_pattern, email.strip()))
@@ -68,17 +88,7 @@ def validate_login_data(email: str, password: str) -> list[str]:
 
 @app.get("/", response_class=HTMLResponse)
 def index(request: Request):
-    return templates.TemplateResponse(
-        "index.html",
-        {
-            "request": request,
-            "message": "",
-            "errors": [],
-            "show_error_modal": False,
-            "form_data": {},
-            "users": get_users(),
-        },
-    )
+    return render_template("index.html", request)
 
 
 @app.post("/register", response_class=HTMLResponse)
@@ -105,16 +115,11 @@ def register(
     )
 
     if errors:
-        return templates.TemplateResponse(
+        return render_template(
             "index.html",
-            {
-                "request": request,
-                "message": "",
-                "errors": errors,
-                "show_error_modal": True,
-                "form_data": {},
-                "users": get_users(),
-            },
+            request,
+            errors=errors,
+            show_error_modal=True,
         )
 
     save_user(
@@ -128,31 +133,16 @@ def register(
         password=password.strip(),
     )
 
-    return templates.TemplateResponse(
+    return render_template(
         "index.html",
-        {
-            "request": request,
-            "message": f"Користувач {name.strip()} збережений",
-            "errors": [],
-            "show_error_modal": False,
-            "form_data": {},
-            "users": get_users(),
-        },
+        request,
+        message=f"Користувач {name.strip()} збережений",
     )
 
 
 @app.get("/login", response_class=HTMLResponse)
 def login_page(request: Request):
-    return templates.TemplateResponse(
-        "login.html",
-        {
-            "request": request,
-            "message": "",
-            "errors": [],
-            "show_error_modal": False,
-            "form_data": {},
-        },
-    )
+    return render_template("login.html", request)
 
 
 @app.post("/login", response_class=HTMLResponse)
@@ -169,24 +159,11 @@ def login_submit(
             errors.append("Невірна пошта або пароль.")
 
     if errors:
-        return templates.TemplateResponse(
+        return render_template(
             "login.html",
-            {
-                "request": request,
-                "message": "",
-                "errors": errors,
-                "show_error_modal": True,
-                "form_data": {},
-            },
+            request,
+            errors=errors,
+            show_error_modal=True,
         )
 
-    return templates.TemplateResponse(
-        "login.html",
-        {
-            "request": request,
-            "message": "Вхід успішний.",
-            "errors": [],
-            "show_error_modal": False,
-            "form_data": {},
-        },
-    )
+    return render_template("login.html", request, message="Вхід успішний.")
