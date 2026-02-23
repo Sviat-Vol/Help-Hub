@@ -2,7 +2,14 @@ import sqlite3
 from pathlib import Path
 from typing import Dict, List, Optional
 
-DB_PATH = Path(__file__).with_name("data.db")
+_PRIMARY_DB_PATH = Path(__file__).with_name("data_SQLite.db")
+_LEGACY_DB_PATH = Path(__file__).with_name("data.db")
+if _PRIMARY_DB_PATH.exists():
+    DB_PATH = _PRIMARY_DB_PATH
+elif _LEGACY_DB_PATH.exists():
+    DB_PATH = _LEGACY_DB_PATH
+else:
+    DB_PATH = _PRIMARY_DB_PATH
 
 
 def _get_connection() -> sqlite3.Connection:
