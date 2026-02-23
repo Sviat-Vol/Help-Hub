@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta charset="utf-8" />
+        <link rel="stylesheet" href="static/globals_req.css" />
+        <link rel="stylesheet" href="static/style_req.css" />
+    </head>
+    <body>
+        <div class="desktop">
+            <header class="header">
+                <div class="logo">LOGO</div>
+                
+                <nav class="nav-menu">
+                    <button class="nav-link"
+                            onclick="window.location.href='/'">
+                        Головна
+                    </button>
+
+                    <button class="nav-link active"
+                            onclick="window.location.href='/create_request'">
+                        Зробити запит
+                    </button>
+                    <button class="nav-link {% if request.url.path == '/' %}active{% endif %}"
+                            onclick="window.location.href='/map'">
+                        Мапа потреб
+                    </button>
+                </nav>
+
+                <div class="burger-menu">
+                    <span></span><span></span><span></span>
+                </div>
+            </header>
+            <div class="text-wrapper">Створення запиту</div>
+            <img class="line" src="img/line-7.svg" />
+            <img class="img" src="img/image.svg" />
+            <img class="rectangle" src="img/rectangle-17.svg" />
+            <form id="requestForm">
+                <div class="view-4">
+                    <div class="rectangle-3"></div>
+
+                    <label class="text-wrapper-9">
+                        Короткий опис проблеми
+                    </label>
+
+                    <input 
+                        type="text" 
+                        id="title" 
+                        maxlength="100" 
+                        minlength="5" 
+                        required
+                        class="input-field"
+                    >
+                </div>
+                <div class="div-2">
+                    <div class="rectangle-3"></div>
+
+                    <label class="text-wrapper-10">
+                        Розкажіть детальніше, що саме потрібно
+                    </label>
+
+                    <textarea 
+                        id="description" 
+                        minlength="10"
+                        maxlength="500"
+                        required
+                        class="textarea-field"
+                    ></textarea>
+                </div>
+                <div class="view-2">
+                    <div class="rectangle-2"></div>
+                    <button type="button" id="geoBtn" class="text-wrapper-4">
+                        Використати геолокацію
+                    </button>
+                </div>
+                <div class="view">
+                    <div class="div"></div>
+
+                    <button id="createBtn" class="text-wrapper-2">
+                        Створити запит
+                    </button>
+
+                    <p class="p">
+                        <span class="span">Продовжуючи, ви погоджуєтеся з </span>
+                        <span class="text-wrapper-3">
+                            Умовами використання та Політикою конфіденційності.
+                        </span>
+                    </p>
+
+                </div>
+            </div>
+            <input type="hidden" id="lat">
+            <input type="hidden" id="lng">
+        </form>
+        <div id="successMessage"></div>
+        <script src="/static/create_request.js"></script>
+
+    </body>
+</html>

@@ -1,0 +1,106 @@
+<!-- <!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Карта</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+    <link rel="stylesheet" href="/static/map.css">
+</head>
+<body>
+
+<header class="header">
+    <div class="logo">LOGO</div>
+
+    <nav class="nav-menu">
+        <button class="nav-link {% if request.url.path == '/' %}active{% endif %}"
+                onclick="window.location.href='/'">
+            Головна
+        </button>
+
+        <button class="nav-link {% if request.url.path == '/create_request' %}active{% endif %}"
+                onclick="window.location.href='/create_request'">
+            Зробити запит
+        </button>
+
+        <button class="nav-link {% if request.url.path == '/map' %}active{% endif %}"
+                onclick="window.location.href='/map'">
+            Мапа потреб
+        </button>
+
+    </nav>
+
+
+    <div class="burger-menu">
+        <span></span><span></span><span></span>
+    </div>
+</header>
+<div id="map"></div>
+<div id="sidebar" class="sidebar">
+    <button class="close-btn" onclick="closeSidebar()">✖</button>
+    <h2 id="info-name"></h2>
+    <p><strong>Опис:</strong></p>
+    <p id="info-description"></p>
+    <p><strong>Статус:</strong> <span id="info-status"></span></p>
+
+    <button class="accept-btn" onclick="acceptRequest()">
+        Прийняти запит
+    </button>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="/static/map.js"></script>
+
+</body>
+</html> -->
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet"
+          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+    <link rel="stylesheet" href="/static/style_register.css">
+</head>
+<body>
+    <header class="topbar">
+        <div class="topbar-inner">
+        <div class="logo">LOGO</div>
+        <nav class="nav">
+            <a href="/">Головна</a>
+            <a href="/create_request">Зробити запит</a>
+            <a href="/map">Мапа потреб</a>
+        </nav>
+        </div>
+    </header>
+    <div id="map"></div>
+
+<!-- Sidebar -->
+<div id="sidebar" class="sidebar">
+
+    <button onclick="closeSidebar()">✖</button>
+
+    <h2 id="detail-title"></h2>
+
+    <p><b>Опис:</b></p>
+    <p id="detail-description"></p>
+
+    <p><b>Статус:</b> <span id="detail-status"></span></p>
+
+    <button onclick="acceptRequest()">Прийняти</button>
+    <button onclick="cancelRequest()">Скасувати</button>
+    <button id="contactsBtn" onclick="showContacts()" style="display:none;">
+        Показати контакти
+    </button>
+
+</div>
+
+
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="/static/map.js"></script>
+
+</body>
+</html>
