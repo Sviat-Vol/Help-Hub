@@ -1,0 +1,396 @@
+.desktop {
+    position: relative;
+    width: 1200px;
+    height: 1300px;
+    background-color: #f7f9ff;
+    overflow: hidden;
+}
+
+.desktop .text-wrapper {
+    position: absolute;
+    top: 186px;
+    left: 94px;
+    width: 279px;
+    font-family: "Jura-Regular", Helvetica;
+    font-weight: 400;
+    color: #727174;
+    font-size: 45px;
+    letter-spacing: 0;
+    line-height: normal;
+}
+
+.desktop .div {
+    position: absolute;
+    top: 186px;
+    left: 373px;
+    width: 186px;
+    font-family: "Jura-Regular", Helvetica;
+    font-weight: 400;
+    color: #727174;
+    font-size: 45px;
+    letter-spacing: 0;
+    line-height: normal;
+}
+
+.desktop .password {
+    position: absolute;
+    top: 363px;
+    right: 98px;
+    width: 1020px;
+    height: 56px;
+}
+
+.desktop .rectangle {
+    position: absolute;
+    top: 0;
+    right: 4px;
+    width: 1016px;
+    height: 56px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    border: 2px solid;
+    border-color: #e1eafb;
+}
+
+.desktop .text-wrapper-2 {
+    position: absolute;
+    top: 26px;
+    left: 15px;
+    width: 145px;
+    opacity: 0.6;
+    font-family: var(--body-m-font-family);
+    font-weight: var(--body-m-font-weight);
+    color: #565252;
+    font-size: var(--body-m-font-size);
+    letter-spacing: var(--body-m-letter-spacing);
+    line-height: var(--body-m-line-height);
+    font-style: var(--body-m-font-style);
+}
+
+.desktop .text-wrapper-3 {
+    position: absolute;
+    top: 5px;
+    left: 15px;
+    width: 92px;
+    font-family: "Commissioner-Regular", Helvetica;
+    font-weight: 400;
+    color: #787878;
+    font-size: 13px;
+    letter-spacing: 0;
+    line-height: 24px;
+    white-space: nowrap;
+}
+
+.desktop .icon {
+    left: 947px;
+    position: absolute;
+    top: 16px;
+    width: 24px;
+    height: 24px;
+}
+
+.desktop .basil-eye-closed {
+    position: absolute;
+    top: 15px;
+    left: 972px;
+    width: 25px;
+    height: 25px;
+    opacity: 0.6;
+}
+
+.desktop .vector {
+    position: absolute;
+    width: 76.12%;
+    height: 72.92%;
+    top: 13.62%;
+    left: 13.46%;
+}
+
+.desktop .img {
+    position: absolute;
+    width: 51.76%;
+    height: 43.38%;
+    top: 22.92%;
+    left: 10.42%;
+}
+
+.desktop .email {
+    position: absolute;
+    top: 280px;
+    right: 98px;
+    width: 1020px;
+    height: 56px;
+}
+
+.desktop .text-wrapper-4 {
+    position: absolute;
+    top: 5px;
+    left: 15px;
+    width: 115px;
+    font-family: "Commissioner-Regular", Helvetica;
+    font-weight: 400;
+    color: #787878;
+    font-size: 13px;
+    letter-spacing: 0;
+    line-height: 24px;
+    white-space: nowrap;
+}
+
+.desktop .icon-2 {
+    left: 973px;
+    position: absolute;
+    top: 16px;
+    width: 24px;
+    height: 24px;
+}
+
+.desktop .text-wrapper-5 {
+    position: absolute;
+    top: 419px;
+    left: 106px;
+    width: 110px;
+    font-family: "Commissioner-Regular", Helvetica;
+    font-weight: 400;
+    color: #9a9797;
+    font-size: 12px;
+    letter-spacing: 0;
+    line-height: 24px;
+    white-space: nowrap;
+}
+
+.desktop .rectangle-2 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1200px;
+    height: 132px;
+}
+
+.desktop .view {
+    display: flex;
+    width: 262px;
+    height: 75px;
+    align-items: flex-start;
+    gap: 16px;
+    position: absolute;
+    top: 506px;
+    left: 91px;
+}
+
+.desktop .apple {
+    position: relative;
+    width: 77px;
+    height: 75px;
+}
+
+.desktop .group {
+    position: relative;
+    height: 100%;
+    background-image: url(./img/back-2.svg);
+    background-size: 100% 100%;
+}
+
+.desktop .shape {
+    position: absolute;
+    width: 43.78%;
+    height: 51.25%;
+    top: 20.83%;
+    left: 28.11%;
+}
+
+.desktop .facebook {
+    position: relative;
+    width: 76px;
+    height: 75px;
+}
+
+.desktop .shape-wrapper {
+    position: relative;
+    height: 100%;
+    background-image: url(./img/back.svg);
+    background-size: 100% 100%;
+}
+
+.desktop .shape-2 {
+    position: absolute;
+    width: 25.38%;
+    height: 54.40%;
+    top: 25.00%;
+    left: 38.33%;
+}
+
+.desktop .google {
+    position: relative;
+    width: 77px;
+    height: 75px;
+    background-image: url(./img/group.png);
+    background-size: 100% 100%;
+}
+
+.desktop .text-wrapper-6 {
+    position: absolute;
+    top: 462px;
+    left: 89px;
+    width: 400px;
+    font-family: "Jura-Regular", Helvetica;
+    font-weight: 400;
+    color: #9a9797;
+    font-size: 25px;
+    letter-spacing: 0;
+    line-height: normal;
+}
+
+.desktop .p {
+    position: absolute;
+    right: 380px;
+    bottom: 512px;
+    font-family: "Commissioner-Regular", Helvetica;
+    font-weight: 400;
+    color: #969696;
+    font-size: 20px;
+    letter-spacing: 0.20px;
+    line-height: 10px;
+    white-space: nowrap;
+}
+
+.desktop .span {
+    letter-spacing: 0.04px;
+}
+
+.desktop .text-wrapper-7 {
+    letter-spacing: 0.04px;
+    text-decoration: underline;
+}
+
+.desktop .view-2 {
+    position: absolute;
+    width: calc(100% - 182px);
+    top: 664px;
+    left: 82px;
+    height: 97px;
+}
+
+.desktop .rectangle-3 {
+    position: absolute;
+    width: calc(100% - 2px);
+    top: 0;
+    left: 0;
+    height: 97px;
+    background-color: #638be24c;
+    border-radius: 10px;
+    opacity: 0.5;
+}
+
+.desktop .text-wrapper-8 {
+    position: absolute;
+    top: 37px;
+    left: calc(50.00% - 87px);
+    opacity: 0.8;
+    font-family: "Jura-Regular", Helvetica;
+    font-weight: 400;
+    color: #565353;
+    font-size: 50px;
+    letter-spacing: 0;
+    line-height: 24px;
+    white-space: nowrap;
+}
+
+.desktop .view-3 {
+    position: absolute;
+    top: 37px;
+    left: 46px;
+    width: 1264px;
+    height: 58px;
+    display: flex;
+}
+
+.desktop .text-wrapper-9 {
+    width: 176.16px;
+    height: 58px;
+    font-family: "Inter-Regular", Helvetica;
+    font-weight: 400;
+    color: #727174;
+    font-size: 48px;
+    letter-spacing: 0;
+    line-height: normal;
+}
+
+.desktop .text-wrapper-10 {
+    align-self: flex-end;
+    margin-bottom: 12px;
+    width: 239.49px;
+    height: 40px;
+    margin-left: 75.8px;
+    font-family: "Jura-Regular", Helvetica;
+    font-weight: 400;
+    color: #727174;
+    font-size: 35px;
+    letter-spacing: 0;
+    line-height: normal;
+    white-space: nowrap;
+}
+
+.desktop .text-wrapper-11 {
+    align-self: flex-end;
+    margin-bottom: 14px;
+    width: 297.06px;
+    height: 40px;
+    margin-left: 20.7px;
+    font-family: "Jura-Regular", Helvetica;
+    font-weight: 400;
+    color: #727174;
+    font-size: 35px;
+    letter-spacing: 0;
+    line-height: normal;
+    white-space: nowrap;
+}
+
+.desktop .text-wrapper-12 {
+    align-self: flex-end;
+    margin-bottom: 14px;
+    width: 369.6px;
+    height: 40px;
+    margin-left: 77.1px;
+    font-family: "Jura-Regular", Helvetica;
+    font-weight: 400;
+    color: #727174;
+    font-size: 35px;
+    letter-spacing: 0;
+    line-height: normal;
+    white-space: nowrap;
+}
+
+.desktop .line {
+    position: absolute;
+    top: 247px;
+    left: 376px;
+    width: 79px;
+    height: 1px;
+}
+
+.desktop .rectangle-4 {
+    position: absolute;
+    top: 426px;
+    left: 89px;
+    width: 12px;
+    height: 12px;
+    background-color: #ffffff;
+    border-radius: 1.5px;
+    border: 1px solid;
+    border-color: #e1eafb;
+}
+
+.desktop .text-wrapper-13 {
+    position: absolute;
+    top: 428px;
+    left: 1009px;
+    width: 110px;
+    font-family: "Commissioner-Regular", Helvetica;
+    font-weight: 400;
+    color: #9a9797;
+    font-size: 12px;
+    letter-spacing: 0;
+    line-height: 24px;
+    text-decoration: underline;
+    white-space: nowrap;
+}

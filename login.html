@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Вхід</title>
+  <link rel="stylesheet" href="/static/style_register.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="logo">LOGO</div>
+      <nav class="nav">
+        <a href="/">Головна</a>
+        <a href="/create_request">Зробити запит</a>
+        <a href="/map">Мапа потреб</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="auth">
+      <div class="tabs">
+        <a class="tab" href="/register">Реєстрація</a>
+        <a class="tab active" href="/login">Вхід</a>
+      </div>
+
+      <form class="form" method="post" action="/login" autocomplete="off">
+        <input name="email" type="email" placeholder="Поштова скринька   example@mail.com" required />
+        <input name="password" type="password" placeholder="Пароль" required />
+
+        <button type="submit" class="submit-btn">Увійти</button>
+
+        {% if message %}
+          <p class="server-message">{{ message }}</p>
+        {% endif %}
+
+        <p class="auth-switch">
+          Ще не зареєструвався?
+          <a href="/register">Створи акаунт (Реєстрація)</a>
+        </p>
+      </form>
+    </section>
+  </main>
+
+  {% if show_error_modal and errors %}
+  <div class="modal open" id="error-modal">
+    <div class="modal-content">
+      <h3>Помилка входу</h3>
+      <ul class="error-list">
+        {% for error in errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+      <button type="button" class="modal-close">Зрозуміло</button>
+    </div>
+  </div>
+  {% endif %}
+  <form method="post">
+    <input type="hidden" name="next" value="{{ next }}">
+  <script src="/static/register.js"></script>
+</body>
+</html>
