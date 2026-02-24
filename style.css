@@ -38,17 +38,16 @@ body {
     background: #dfe6f3;
     display: flex;
     align-items: center;
-    justify-content: center;
     z-index: 1000;
 }
 
 .topbar-inner {
-    position: relative;
     width: 100%;
     max-width: 1200px;
     padding: 0 24px;
     display: flex;
     align-items: center;
+    justify-content: space-between;
 }
 
 /* ЛОГО */
@@ -56,13 +55,11 @@ body {
     font-size: 28px;
     color: #666d79;
     font-weight: 500;
+    flex-shrink: 0;
 }
 
 /* ЦЕНТРАЛЬНА НАВІГАЦІЯ */
 .nav {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
     display: flex;
     gap: 48px;
 }
@@ -230,6 +227,17 @@ body {
 
     .nav {
         display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 72px;
+        left: 0;
+        width: 100%;
+        background: #dfe6f3;
+        padding: 20px;
+    }
+
+   .nav.active {
+        display: flex
     }
 
     .burger-menu {
