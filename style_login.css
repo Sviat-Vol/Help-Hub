@@ -1,7 +1,9 @@
 .desktop {
     position: relative;
-    width: 1200px;
-    height: 1300px;
+    width: 100%;
+    max-width: 1200px;
+    max-height: 1300px;
+    margin: 0 auto;
     background-color: #f7f9ff;
     overflow: hidden;
 }
@@ -9,25 +11,24 @@
 .desktop .text-wrapper {
     position: absolute;
     top: 186px;
-    left: 94px;
-    width: 279px;
+    left: 7.8%; 
+    width: 23.2%;
     font-family: "Jura-Regular", Helvetica;
     font-weight: 400;
     color: #727174;
-    font-size: 45px;
+    font-size: 3.75vw; /* Адаптивний шрифт */
     letter-spacing: 0;
     line-height: normal;
 }
-
 .desktop .div {
     position: absolute;
     top: 186px;
-    left: 373px;
-    width: 186px;
+    left: 31.08%;
+    width: 15.5%;
     font-family: "Jura-Regular", Helvetica;
     font-weight: 400;
     color: #727174;
-    font-size: 45px;
+    font-size: 3.75vw;
     letter-spacing: 0;
     line-height: normal;
 }
@@ -35,16 +36,16 @@
 .desktop .password {
     position: absolute;
     top: 363px;
-    right: 98px;
-    width: 1020px;
+    right: 8.16%;
+    width: 85%;
     height: 56px;
 }
 
 .desktop .rectangle {
     position: absolute;
     top: 0;
-    right: 4px;
-    width: 1016px;
+    right: 0.4%;
+    width: 99.6%;
     height: 56px;
     background-color: #ffffff;
     border-radius: 10px;
@@ -117,8 +118,8 @@
 .desktop .email {
     position: absolute;
     top: 280px;
-    right: 98px;
-    width: 1020px;
+    right: 8.16%;
+    width: 85%;
     height: 56px;
 }
 
@@ -168,13 +169,13 @@
 
 .desktop .view {
     display: flex;
-    width: 262px;
+    width: 21.83%;
     height: 75px;
     align-items: flex-start;
-    gap: 16px;
+    gap: 1.33vw;
     position: absolute;
     top: 506px;
-    left: 91px;
+    left: 7.58%;
 }
 
 .desktop .apple {
@@ -264,9 +265,9 @@
 
 .desktop .view-2 {
     position: absolute;
-    width: calc(100% - 182px);
+    width: calc(100% - 15.16%);
     top: 664px;
-    left: 82px;
+    left: 6.83%;
     height: 97px;
 }
 
@@ -284,12 +285,14 @@
 .desktop .text-wrapper-8 {
     position: absolute;
     top: 37px;
-    left: calc(50.00% - 87px);
+    left: 0;
+    width: 100%; 
+    text-align: center;
     opacity: 0.8;
     font-family: "Jura-Regular", Helvetica;
     font-weight: 400;
     color: #565353;
-    font-size: 50px;
+    font-size: 4.16vw;
     letter-spacing: 0;
     line-height: 24px;
     white-space: nowrap;
@@ -393,4 +396,10 @@
     line-height: 24px;
     text-decoration: underline;
     white-space: nowrap;
+}
+
+@media (min-width: 1200px) {
+    .desktop .text-wrapper, .desktop .div { font-size: 45px; }
+    .desktop .text-wrapper-8 { font-size: 50px; }
+    .desktop .p { font-size: 20px; }
 }
