@@ -3,19 +3,20 @@
 import sqlite3
 from pathlib import Path
 from typing import Dict, List, Optional
+from passlib.context import CryptContext
+
 
 DB_PATH = Path(__file__).with_name("users.db")
 
+pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
 def _get_connection() -> sqlite3.Connection:
-    """Open DB connection with row access by column names."""
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
 
 
 def _init_db() -> None:
-    """Create users table if it does not exist."""
     with _get_connection() as conn:
         conn.execute(
             """
@@ -44,7 +45,9 @@ def save_user(
     email: str,
     password: str,
 ) -> None:
-    """Insert a new user row."""
+
+    hashed_password = pwd_context.hash(password)
+
     with _get_connection() as conn:
         conn.execute(
             """
@@ -52,13 +55,12 @@ def save_user(
                 surname, name, patronymic, gender, phone_code, phone, email, password
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             """,
-            (surname, name, patronymic, gender, phone_code, phone, email, password),
+            (surname, name, patronymic, gender, phone_code, phone, email, hashed_password),
         )
         conn.commit()
 
 
 def get_users() -> List[Dict[str, str]]:
-    """Return all users as dictionaries ordered by newest first."""
     with _get_connection() as conn:
         rows = conn.execute(
             """
@@ -72,7 +74,6 @@ def get_users() -> List[Dict[str, str]]:
 
 
 def email_exists(email: str) -> bool:
-    """Check whether email is already present (case-insensitive)."""
     target = email.strip().lower()
     with _get_connection() as conn:
         row = conn.execute(
@@ -84,7 +85,6 @@ def email_exists(email: str) -> bool:
 
 
 def find_user_by_credentials(email: str, password: str) -> Optional[Dict[str, str]]:
-    """Return matching user by email/password or None."""
     target = email.strip().lower()
 
     with _get_connection() as conn:
@@ -92,12 +92,19 @@ def find_user_by_credentials(email: str, password: str) -> Optional[Dict[str, st
             """
             SELECT surname, name, patronymic, gender, phone_code, phone, email, password
             FROM users
-            WHERE lower(email) = ? AND password = ?
+            WHERE lower(email) = ?
             LIMIT 1
             """,
-            (target, password),
+            (target,),
         ).fetchone()
 
-    return dict(row) if row is not None else None
+    if row is None:
+        return None
+
+
+    if not pwd_context.verify(password, row["password"]):
+        return None
+
+    return dict(row)
 
 _init_db()
