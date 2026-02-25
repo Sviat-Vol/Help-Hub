@@ -1,43 +1,48 @@
 <!DOCTYPE html>
-<!-- Головна сторінка Volontire Map з навігацією, hero-блоком та інформаційними картками. -->
 <html lang="uk">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Допомога поруч</title>
     <link rel="stylesheet" href="/static/globals.css" />
-    <link rel="stylesheet" href="/static/style2.css" />
+    <link rel="stylesheet" href="/static/style.css" />
 </head>
 <body>
     <header class="topbar">
-    <div class="topbar-inner">
-        <div class="logo">LOGO</div>
+        <div class="topbar-inner">
+            <div class="logo">HelpHub</div>
 
-        <nav class="nav">
-            <a href="/">Головна</a>
-            <a href="/create_request">Зробити запит</a>
-            <a href="/map">Мапа потреб</a>
-        </nav>
+            <div class="right-menu">
+                <nav class="nav">
+                    <a href="/">Головна</a>
+                    <a href="/create_request">Зробити запит</a>
+                    <a href="/map">Мапа потреб</a>
+                </nav>
 
-        <div class="auth-buttons">
-            {% if user %}
-                <div class="profile-wrapper">
-                    <div class="profile-icon" onclick="toggleDropdown()">
-                        {{ user[0]|upper }}
-                    </div>
+                <div class="auth-buttons">
+                    {% if user %}
+                        <div class="profile-wrapper">
+                            <div class="profile-icon" onclick="toggleDropdown()">
+                                {{ user[0]|upper }}
+                            </div>
 
-                    <div id="profileDropdown" class="profile-dropdown">
-                        <div class="profile-email">{{ user }}</div>
-                        <a href="/logout" class="logout-btn">Вийти</a>
-                    </div>
+                            <div id="profileDropdown" class="profile-dropdown">
+                                <div class="profile-email">{{ user }}</div>
+                                <a href="/logout" class="logout-btn">Вийти</a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <a href="/register" class="btn btn-outline">Реєстрація</a>
+                        <a href="/login" class="btn btn-primary">Вхід</a>
+                    {% endif %}
                 </div>
-            {% else %}
-                <a href="/register" class="btn btn-outline">Реєстрація</a>
-                <a href="/login" class="btn btn-primary">Вхід</a>
-            {% endif %}
+            </div>
+
+            <div class="burger-menu">
+                <span></span><span></span><span></span>
+            </div>
         </div>
-    </div>
-</header>
+    </header>
 
             <div class="burger-menu">
                 <span></span><span></span><span></span>
