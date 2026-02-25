@@ -1,3 +1,5 @@
+"""Main FastAPI application for Volontire Map: pages, auth, and request APIs."""
+
 from fastapi import FastAPI, Request, Depends, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
@@ -16,6 +18,8 @@ Base = declarative_base()
 
 
 class RequestDB(Base):
+    """ORM model for help requests shown on the map."""
+
     __tablename__ = "requests"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -30,6 +34,7 @@ class RequestDB(Base):
 
 class Database:
     def __init__(self, url: str):
+        """Create engine/session factory and ensure schema exists."""
         self.engine = create_engine(
             url,
             connect_args={"check_same_thread": False}
@@ -38,11 +43,13 @@ class Database:
         Base.metadata.create_all(bind=self.engine)
 
     def get_session(self):
+        """Return a new SQLAlchemy session."""
         return self.SessionLocal()
 
 class UserService:
 
     def _is_valid_email(self, email: str) -> bool:
+        """Validate email format using a simple regex pattern."""
         pattern = r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$"
         return bool(re.match(pattern, email.strip()))
 
@@ -57,6 +64,7 @@ class UserService:
         email: str,
         password: str,
     ) -> list[str]:
+        """Validate registration payload and return user-facing error messages."""
 
         errors: list[str] = []
 
@@ -88,6 +96,7 @@ class UserService:
         return errors
 
     def validate_login_data(self, email: str, password: str) -> list[str]:
+        """Validate login payload and return a list of errors if any."""
         errors: list[str] = []
         if not self._is_valid_email(email):
             errors.append("Введіть коректну електронну пошту.")
@@ -96,23 +105,28 @@ class UserService:
         return errors
 
     def login(self, email: str, password: str):
+        """Authenticate user by email/password via data layer."""
         return find_user_by_credentials(email=email, password=password)
 
     def register(self, **data):
+        """Persist new user via data layer."""
         save_user(**data)
 
 class RequestService:
 
     def __init__(self, db: Database):
+        """Store DB dependency for request operations."""
         self.db = db
 
     def get_all(self):
+        """Return all help requests from storage."""
         session = self.db.get_session()
         requests = session.query(RequestDB).all()
         session.close()
         return requests
 
     def create(self, title, description, lat, lng, author_email):
+        """Create a new help request in 'New' status."""
         session = self.db.get_session()
         new_request = RequestDB(
             title=title,
@@ -127,6 +141,7 @@ class RequestService:
         session.close()
 
     def accept(self, request_id: int, user: str):
+        """Assign request to helper if it is still available."""
         session = self.db.get_session()
         req = session.query(RequestDB).filter(RequestDB.id == request_id).first()
 
@@ -141,6 +156,7 @@ class RequestService:
         return {"success": True}
 
     def cancel(self, request_id: int, user: str):
+        """Cancel request according to role: author deletes, helper releases."""
         session = self.db.get_session()
         req = session.query(RequestDB).filter(RequestDB.id == request_id).first()
 
@@ -165,6 +181,7 @@ class RequestService:
         return {"error": "Forbidden"}
 
     def get_contacts(self, request_id: int, user: str):
+        """Return author/helper contacts for accepted request participants only."""
         session = self.db.get_session()
         req = session.query(RequestDB).filter(RequestDB.id == request_id).first()
 
@@ -197,6 +214,7 @@ class RequestService:
 class AppFactory:
 
     def __init__(self):
+        """Create app and wire services, templates, and routes."""
         self.db = Database(DATABASE_URL)
         self.user_service = UserService()
         self.request_service = RequestService(self.db)
@@ -207,11 +225,13 @@ class AppFactory:
         self._configure()
 
     def _configure(self):
+        """Configure middleware, static files, and route registration."""
         self.app.add_middleware(SessionMiddleware, secret_key="supersecretkey")
         self.app.mount("/static", StaticFiles(directory="static"), name="static")
         self._register_routes()
 
     def require_login(self, request: Request):
+        """Return current user or redirect unauthenticated user to login page."""
         user = request.session.get("user")
         if not user:
             next_url = request.url.path
@@ -219,9 +239,11 @@ class AppFactory:
         return user
 
     def _register_routes(self):
+        """Register page and API endpoints."""
 
         @self.app.get("/")
         def home(request: Request):
+            """Render homepage."""
             return self.templates.TemplateResponse("index.html", {
                 "request": request,
                 "user": request.session.get("user")
@@ -229,6 +251,7 @@ class AppFactory:
 
         @self.app.get("/register", response_class=HTMLResponse)
         def register_page(request: Request):
+            """Render registration page."""
             return self.templates.TemplateResponse("register.html", {"request": request})
 
         @self.app.post("/register", response_class=HTMLResponse)
@@ -243,6 +266,7 @@ class AppFactory:
             email: str = Form(""),
             password: str = Form(""),
         ):
+            """Validate and create a new user account."""
             errors = self.user_service.validate_register_data(
                 surname, name, patronymic,
                 gender, phone_code, phone,
@@ -274,6 +298,7 @@ class AppFactory:
 
         @self.app.get("/login", response_class=HTMLResponse)
         def login_page(request: Request, next: str = None):
+            """Render login page (or redirect if already logged in)."""
             if request.session.get("user"):
                 return RedirectResponse("/", status_code=302)
 
@@ -289,6 +314,7 @@ class AppFactory:
             password: str = Form(""),
             next: str = Form(None)
         ):
+            """Authenticate user and start session."""
             errors = self.user_service.validate_login_data(email, password)
 
             if not errors:
@@ -309,6 +335,7 @@ class AppFactory:
 
         @self.app.get("/create_request")
         def create_request(request: Request, user=Depends(self.require_login)):
+            """Render request creation page for authenticated users."""
             if isinstance(user, RedirectResponse):
                 return user
             return self.templates.TemplateResponse("create_request.html", {
@@ -317,6 +344,7 @@ class AppFactory:
 
         @self.app.get("/map", response_class=HTMLResponse)
         def map_page(request: Request, user=Depends(self.require_login)):
+            """Render requests map page for authenticated users."""
             if isinstance(user, RedirectResponse):
                 return user
             return self.templates.TemplateResponse("map.html", {
@@ -325,6 +353,7 @@ class AppFactory:
 
         @self.app.get("/api/requests")
         def get_requests():
+            """Return serialized list of all requests."""
             requests = self.request_service.get_all()
             return [
                 {
@@ -347,6 +376,7 @@ class AppFactory:
             lat: float = Form(...),
             lng: float = Form(...)
         ):
+            """Create request from form data for logged-in user."""
             user = request.session.get("user")
             if not user:
                 return {"error": "Not authorized"}
@@ -356,6 +386,7 @@ class AppFactory:
 
         @self.app.post("/api/requests/{request_id}/accept")
         def accept_request(request_id: int, request: Request):
+            """Accept request on behalf of current user."""
             user = request.session.get("user")
             if not user:
                 return {"error": "Not authorized"}
@@ -364,6 +395,7 @@ class AppFactory:
 
         @self.app.post("/api/requests/{request_id}/cancel")
         def cancel_request(request_id: int, request: Request):
+            """Cancel or release request on behalf of current user."""
             user = request.session.get("user")
             if not user:
                 return {"error": "Not authorized"}
@@ -372,6 +404,7 @@ class AppFactory:
 
         @self.app.get("/api/requests/{request_id}/contacts")
         def get_contacts(request_id: int, request: Request):
+            """Return contacts for accepted request when user has access."""
             user = request.session.get("user")
             if not user:
                 return {"error": "Not authorized"}
@@ -380,6 +413,7 @@ class AppFactory:
 
         @self.app.get("/logout")
         def logout(request: Request):
+            """Clear session and redirect to homepage."""
             request.session.clear()
             return RedirectResponse("/", status_code=302)
 

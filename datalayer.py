@@ -1,3 +1,5 @@
+"""SQLite data-access helpers for user registration and authentication."""
+
 import sqlite3
 from pathlib import Path
 from typing import Dict, List, Optional
@@ -6,12 +8,14 @@ DB_PATH = Path(__file__).with_name("users.db")
 
 
 def _get_connection() -> sqlite3.Connection:
+    """Open DB connection with row access by column names."""
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
 
 
 def _init_db() -> None:
+    """Create users table if it does not exist."""
     with _get_connection() as conn:
         conn.execute(
             """
@@ -40,6 +44,7 @@ def save_user(
     email: str,
     password: str,
 ) -> None:
+    """Insert a new user row."""
     with _get_connection() as conn:
         conn.execute(
             """
@@ -53,6 +58,7 @@ def save_user(
 
 
 def get_users() -> List[Dict[str, str]]:
+    """Return all users as dictionaries ordered by newest first."""
     with _get_connection() as conn:
         rows = conn.execute(
             """
@@ -66,6 +72,7 @@ def get_users() -> List[Dict[str, str]]:
 
 
 def email_exists(email: str) -> bool:
+    """Check whether email is already present (case-insensitive)."""
     target = email.strip().lower()
     with _get_connection() as conn:
         row = conn.execute(
@@ -77,6 +84,7 @@ def email_exists(email: str) -> bool:
 
 
 def find_user_by_credentials(email: str, password: str) -> Optional[Dict[str, str]]:
+    """Return matching user by email/password or None."""
     target = email.strip().lower()
 
     with _get_connection() as conn:

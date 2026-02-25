@@ -1,3 +1,4 @@
+// Клієнтська логіка форми створення запиту: геолокація, валідація та відправка на API.
 document.addEventListener("DOMContentLoaded", () => {
 
     const geoBtn = document.getElementById("geoBtn");

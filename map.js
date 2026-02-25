@@ -1,3 +1,4 @@
+// Клієнтська логіка мапи: завантаження маркерів, деталі запиту, прийняття/скасування та контакти.
 const map = L.map('map').setView([49.0, 31.0], 6);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {

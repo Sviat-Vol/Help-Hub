@@ -1,3 +1,4 @@
+// Керування модальними вікнами на сторінках реєстрації та входу.
 document.addEventListener("DOMContentLoaded", () => {
   const triggers = document.querySelectorAll(".terms-link");
   const closeButtons = document.querySelectorAll(".modal-close");
