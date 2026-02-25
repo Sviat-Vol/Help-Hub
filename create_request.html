@@ -9,29 +9,17 @@
     </head>
     <body>
         <div class="desktop">
-            <header class="header">
-                <div class="logo">LOGO</div>
-                
-                <nav class="nav-menu">
-                    <button class="nav-link"
-                            onclick="window.location.href='/'">
-                        Головна
-                    </button>
+            <header class="topbar">
+        <div class="topbar-inner">
+            <div class="logo">HelpHub</div>
 
-                    <button class="nav-link active"
-                            onclick="window.location.href='/create_request'">
-                        Зробити запит
-                    </button>
-                    <button class="nav-link {% if request.url.path == '/' %}active{% endif %}"
-                            onclick="window.location.href='/map'">
-                        Мапа потреб
-                    </button>
-                </nav>
-
-                <div class="burger-menu">
-                    <span></span><span></span><span></span>
-                </div>
-            </header>
+            <nav class="nav">
+                <a href="/">Головна</a>
+                <a href="/create_request">Зробити запит</a>
+                <a href="/map">Мапа потреб</a>
+            </nav>
+        </div>
+    </header>
             <div class="text-wrapper">Створення запиту</div>
             <form id="requestForm">
                 <div class="view-4">
