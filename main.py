@@ -8,12 +8,35 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 from typing import Optional
 import re
 from passlib.context import CryptContext
-from datalayer import email_exists, find_user_by_credentials, get_users, save_user
+from datalayer import (
+    delete_user_by_email,
+    email_exists,
+    find_user_by_credentials,
+    get_user_by_email,
+    get_users,
+    save_user,
+)
 import os
+import sqlite3
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 DATABASE_URL = "sqlite:///./requests.db"
+COMPLAINTS_DB_PATH = "complaints.db"
+ADMIN_EMAILS = {
+    "sviat_admin@gmail.com",
+    "nadia_admin@gmail.com",
+    "karina_admin@gmail.com",
+    "alex_admin@gmail.com",
+}
+ADMIN_PASSWORD = "1234567890"
+USER_DELETE_REASONS = {
+    "Розсилка спаму або масових повідомлень",
+    "Підозріла або шахрайська активність",
+    "Поширення забороненого чи незаконного контенту",
+    "Образлива або агресивна поведінка",
+    "Скарги інших користувачів",
+}
 
 Base = declarative_base()
 
@@ -29,6 +52,15 @@ class RequestDB(Base):
     author_email = Column(String, nullable=False)
     accepted_by = Column(String, nullable=True)
     status = Column(String, default="New")
+
+class DeletedRequestNoticeDB(Base):
+    __tablename__ = "deleted_request_notices"
+
+    id = Column(Integer, primary_key=True, index=True)
+    recipient_email = Column(String, nullable=False)
+    request_title = Column(String, nullable=False)
+    reason = Column(String, nullable=False)
+    deleted_by = Column(String, nullable=False)
 
 
 class Database:
@@ -104,6 +136,12 @@ class UserService:
     def register(self, **data):
         save_user(**data)
 
+    def get_by_email(self, email: str):
+        return get_user_by_email(email)
+
+    def delete_by_email(self, email: str) -> bool:
+        return delete_user_by_email(email)
+
 class RequestService:
 
     def __init__(self, db: Database):
@@ -114,6 +152,27 @@ class RequestService:
         requests = session.query(RequestDB).all()
         session.close()
         return requests
+
+    def get_by_id(self, request_id: int):
+        session = self.db.get_session()
+        req = session.query(RequestDB).filter(RequestDB.id == request_id).first()
+        session.close()
+        return req
+
+    def delete_all_by_author(self, author_email: str):
+        session = self.db.get_session()
+        session.query(RequestDB).filter(RequestDB.author_email == author_email).delete()
+        session.commit()
+        session.close()
+
+    def clear_acceptances_for_user(self, user_email: str):
+        session = self.db.get_session()
+        requests = session.query(RequestDB).filter(RequestDB.accepted_by == user_email).all()
+        for req in requests:
+            req.accepted_by = None
+            req.status = "New"
+        session.commit()
+        session.close()
 
     def create(self, title, description, lat, lng, author_email):
         session = self.db.get_session()
@@ -181,21 +240,130 @@ class RequestService:
 
         users = get_users()
 
-        author = next(u for u in users if u["email"] == req.author_email)
-        helper = next(u for u in users if u["email"] == req.accepted_by)
+        author = next((u for u in users if u["email"] == req.author_email), None)
+        helper = next((u for u in users if u["email"] == req.accepted_by), None)
 
         session.close()
 
         return {
             "author": {
-                "email": author["email"],
-                "phone": author["phone"]
+                "email": req.author_email,
+                "phone": author["phone"] if author else "Невідомо"
             },
             "helper": {
-                "email": helper["email"],
-                "phone": helper["phone"]
+                "email": req.accepted_by,
+                "phone": helper["phone"] if helper else "Невідомо"
             }
         }
+
+    def delete_by_admin(self, request_id: int, admin_email: str, reason: str):
+        session = self.db.get_session()
+        req = session.query(RequestDB).filter(RequestDB.id == request_id).first()
+
+        if not req:
+            session.close()
+            return {"error": "Not found"}
+
+        notice = DeletedRequestNoticeDB(
+            recipient_email=req.author_email,
+            request_title=req.title,
+            reason=reason,
+            deleted_by=admin_email,
+        )
+        session.add(notice)
+        session.delete(req)
+        session.commit()
+        session.close()
+        return {"deleted": True}
+
+    def pop_deleted_notices(self, user_email: str):
+        session = self.db.get_session()
+        notices = (
+            session.query(DeletedRequestNoticeDB)
+            .filter(DeletedRequestNoticeDB.recipient_email == user_email)
+            .all()
+        )
+        payload = [
+            {
+                "request_title": n.request_title,
+                "reason": n.reason,
+                "deleted_by": n.deleted_by,
+            }
+            for n in notices
+        ]
+        for n in notices:
+            session.delete(n)
+        session.commit()
+        session.close()
+        return payload
+
+
+class ComplaintService:
+    def __init__(self, db_path: str):
+        self.db_path = db_path
+        self._init_db()
+
+    def _connect(self):
+        conn = sqlite3.connect(self.db_path)
+        conn.row_factory = sqlite3.Row
+        return conn
+
+    def _init_db(self):
+        with self._connect() as conn:
+            conn.execute(
+                """
+                CREATE TABLE IF NOT EXISTS complaints (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    sender_email TEXT NOT NULL,
+                    complaint_text TEXT NOT NULL,
+                    target_email TEXT NOT NULL,
+                    request_id INTEGER
+                )
+                """
+            )
+            columns = [row[1] for row in conn.execute("PRAGMA table_info(complaints)").fetchall()]
+            if "request_id" not in columns:
+                conn.execute("ALTER TABLE complaints ADD COLUMN request_id INTEGER")
+            conn.commit()
+
+    def add_complaint(self, sender_email: str, complaint_text: str, target_email: str, request_id: int):
+        with self._connect() as conn:
+            conn.execute(
+                """
+                INSERT INTO complaints (sender_email, complaint_text, target_email, request_id)
+                VALUES (?, ?, ?, ?)
+                """,
+                (sender_email, complaint_text, target_email, request_id),
+            )
+            conn.commit()
+
+    def list_complaints(self):
+        with self._connect() as conn:
+            rows = conn.execute(
+                """
+                SELECT id, sender_email, complaint_text, target_email, request_id
+                FROM complaints
+                ORDER BY id DESC
+                """
+            ).fetchall()
+        return [dict(row) for row in rows]
+
+    def delete_complaint(self, complaint_id: int):
+        with self._connect() as conn:
+            cur = conn.execute(
+                "DELETE FROM complaints WHERE id = ?",
+                (complaint_id,),
+            )
+            conn.commit()
+        return cur.rowcount > 0
+
+    def delete_by_request(self, request_id: int):
+        with self._connect() as conn:
+            conn.execute(
+                "DELETE FROM complaints WHERE request_id = ?",
+                (request_id,),
+            )
+            conn.commit()
 
 class AppFactory:
 
@@ -203,6 +371,7 @@ class AppFactory:
         self.db = Database(DATABASE_URL)
         self.user_service = UserService()
         self.request_service = RequestService(self.db)
+        self.complaint_service = ComplaintService(COMPLAINTS_DB_PATH)
 
         self.app = FastAPI()
         self.templates = Jinja2Templates(directory="templates")
@@ -220,15 +389,21 @@ class AppFactory:
         if not user:
             next_url = request.url.path
             return RedirectResponse(url=f"/login?next={next_url}", status_code=302)
+        if user.lower() not in ADMIN_EMAILS and self.user_service.get_by_email(user) is None:
+            request.session.clear()
+            next_url = request.url.path
+            return RedirectResponse(url=f"/login?next={next_url}", status_code=302)
         return user
 
     def _register_routes(self):
 
         @self.app.get("/")
         def home(request: Request):
+            deleted_notifications = request.session.pop("deleted_notifications", [])
             return self.templates.TemplateResponse("index.html", {
                 "request": request,
-                "user": request.session.get("user")
+                "user": request.session.get("user"),
+                "deleted_notifications": deleted_notifications,
             })
 
         @self.app.get("/register", response_class=HTMLResponse)
@@ -294,7 +469,12 @@ class AppFactory:
             errors = self.user_service.validate_login_data(email, password)
 
             if not errors:
-                user = self.user_service.login(email, password)
+                email_normalized = email.strip().lower()
+                is_admin = (
+                    email_normalized in ADMIN_EMAILS and
+                    password.strip() == ADMIN_PASSWORD
+                )
+                user = {"email": email_normalized} if is_admin else self.user_service.login(email, password)
                 if user is None:
                     errors.append("Невірна пошта або пароль.")
 
@@ -306,6 +486,8 @@ class AppFactory:
                 })
 
             request.session["user"] = user["email"]
+            request.session["is_admin"] = user["email"].lower() in ADMIN_EMAILS
+            request.session["deleted_notifications"] = self.request_service.pop_deleted_notices(user["email"])
             redirect_url = next if next else "/"
             return RedirectResponse(url=redirect_url, status_code=302)
 
@@ -328,11 +510,13 @@ class AppFactory:
         @self.app.get("/api/requests")
         def get_requests(request: Request):
             current_user = request.session.get("user")
+            is_admin = bool(request.session.get("is_admin"))
 
             requests = self.request_service.get_all()
 
             return {
                 "current_user": current_user,
+                "is_admin": is_admin,
                 "requests": [
                     {
                         "id": r.id,
@@ -378,6 +562,131 @@ class AppFactory:
                 return {"error": "Not authorized"}
 
             return self.request_service.cancel(request_id, user)
+
+        @self.app.post("/api/requests/{request_id}/delete")
+        def delete_request_by_admin(
+            request_id: int,
+            request: Request,
+            reason: str = Form(""),
+        ):
+            user = request.session.get("user")
+            is_admin = bool(request.session.get("is_admin"))
+            if not user:
+                return {"error": "Not authorized"}
+            if not is_admin:
+                return {"error": "Forbidden"}
+            if not reason.strip():
+                return {"error": "Reason is required"}
+            self.complaint_service.delete_by_request(request_id)
+            return self.request_service.delete_by_admin(request_id, user, reason.strip())
+
+        @self.app.post("/api/requests/{request_id}/report")
+        def report_request(
+            request_id: int,
+            request: Request,
+            complaint_text: str = Form(""),
+        ):
+            sender_email = request.session.get("user")
+            if not sender_email:
+                return {"error": "Not authorized"}
+            if not complaint_text.strip():
+                return {"error": "Complaint text is required"}
+
+            req = self.request_service.get_by_id(request_id)
+            if not req:
+                return {"error": "Not found"}
+            if sender_email == req.author_email:
+                return {"error": "Автор запиту не може подати скаргу на свій запит"}
+
+            target_email = req.author_email
+
+            self.complaint_service.add_complaint(
+                sender_email=sender_email,
+                complaint_text=complaint_text.strip(),
+                target_email=target_email,
+                request_id=request_id,
+            )
+            return {"success": True}
+
+        @self.app.get("/api/complaints")
+        def list_complaints(request: Request):
+            user = request.session.get("user")
+            is_admin = bool(request.session.get("is_admin"))
+            if not user:
+                return {"error": "Not authorized"}
+            if not is_admin:
+                return {"error": "Forbidden"}
+            return {"complaints": self.complaint_service.list_complaints()}
+
+        @self.app.get("/api/admin/users/search")
+        def search_user_for_admin(request: Request, email: str = ""):
+            user = request.session.get("user")
+            is_admin = bool(request.session.get("is_admin"))
+            if not user:
+                return {"error": "Not authorized"}
+            if not is_admin:
+                return {"error": "Forbidden"}
+            if not email.strip():
+                return {"error": "Email is required"}
+
+            target = email.strip().lower()
+            if target in ADMIN_EMAILS:
+                return {"error": "Адміністратора видаляти не можна"}
+
+            found = self.user_service.get_by_email(target)
+            if not found:
+                return {"found": False}
+            return {"found": True, "user": found}
+
+        @self.app.post("/api/admin/users/delete")
+        def delete_user_for_admin(
+            request: Request,
+            email: str = Form(""),
+            reason: str = Form(""),
+        ):
+            user = request.session.get("user")
+            is_admin = bool(request.session.get("is_admin"))
+            if not user:
+                return {"error": "Not authorized"}
+            if not is_admin:
+                return {"error": "Forbidden"}
+            if not email.strip():
+                return {"error": "Email is required"}
+            if reason.strip() not in USER_DELETE_REASONS:
+                return {"error": "Некоректна причина видалення"}
+
+            target = email.strip().lower()
+            if target in ADMIN_EMAILS:
+                return {"error": "Адміністратора видаляти не можна"}
+
+            if self.user_service.get_by_email(target) is None:
+                return {"error": "Користувача не знайдено"}
+
+            # By requirements: remove user's profile and their requests, but keep complaints.
+            self.request_service.delete_all_by_author(target)
+            self.request_service.clear_acceptances_for_user(target)
+            deleted = self.user_service.delete_by_email(target)
+            if not deleted:
+                return {"error": "Користувача не знайдено"}
+
+            return {
+                "deleted": True,
+                "email": target,
+                "reason": reason.strip(),
+            }
+
+        @self.app.post("/api/complaints/{complaint_id}/delete")
+        def delete_complaint(complaint_id: int, request: Request):
+            user = request.session.get("user")
+            is_admin = bool(request.session.get("is_admin"))
+            if not user:
+                return {"error": "Not authorized"}
+            if not is_admin:
+                return {"error": "Forbidden"}
+            deleted = self.complaint_service.delete_complaint(complaint_id)
+            if not deleted:
+                return {"error": "Not found"}
+            return {"deleted": True}
 
         @self.app.get("/api/requests/{request_id}/contacts")
         def get_contacts(request_id: int, request: Request):
