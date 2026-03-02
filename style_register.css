@@ -1,4 +1,3 @@
-/* Активні стилі сторінок реєстрації, входу та поточного макета сторінки мапи. */
 html, body {
     height: 100%;
     margin: 0;
@@ -10,14 +9,15 @@ html, body {
 #map {
   margin-top: 72px;
     width: 100vw;
-    height: 90%;
+    height: calc(100vh - 72px);
 }
 
 .sidebar {
     position: fixed;
     top: 0;
-    right: -400px;
+    right: -100%; 
     width: 350px;
+    max-width: 100%; 
     height: 100%;
     background: white;
     padding: 20px;
@@ -86,16 +86,17 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1001;
 }
 
 .topbar-inner {
   width: 100%;
   max-width: 1200px;
-  padding: 0 24px;
+  padding: 0 15px;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  gap: 84px;
+  gap: 20px;
 }
 
 .logo {
@@ -106,13 +107,14 @@ body {
 
 .nav {
   display: flex;
-  gap: 84px;
+  gap: clamp(10px, 4vw, 84px);
 }
 
 .nav a {
   text-decoration: none;
   color: #707785;
-  font-size: 20px;
+  font-size: clamp(14px, 2vw, 20px);
+  white-space: nowrap;
 }
 
 .page {
@@ -126,6 +128,7 @@ body {
 .auth {
   width: 100%;
   max-width: 760px;
+  padding: 10px;
 }
 
 .tabs {
@@ -137,7 +140,7 @@ body {
 .tab {
   text-decoration: none;
   color: #707785;
-  font-size: 38px;
+  font-size: clamp(20px, 5vw, 38px);
   padding-bottom: 6px;
 }
 
@@ -186,7 +189,7 @@ body {
 
 .phone-row {
   display: grid;
-  grid-template-columns: 190px 1fr;
+  grid-template-columns: 120px 1fr;
   gap: 10px;
 }
 
@@ -206,15 +209,16 @@ body {
 }
 
 .submit-btn {
-  width: 82%;
-  height: 72px;
-  margin: 10px auto 0;
+  width: 100%; 
+  max-width: 400px;
+  height: 60px;
+  margin: 20px auto 0;
   display: block;
   border: none;
   border-radius: 12px;
   background: #dbe5f9;
   color: #6f7583;
-  font-size: 24px;
+  font-size: 20px;
   cursor: pointer;
 }
 
@@ -300,4 +304,42 @@ body {
 .auth-switch a {
   color: #7f8794;
   text-decoration: underline;
+}
+@media (max-width: 768px) {
+    .topbar-inner {
+        flex-direction: column; 
+        height: auto;
+        padding: 10px;
+    }
+    
+    .topbar {
+        height: auto;
+        min-height: 72px;
+    }
+    
+    #map {
+        margin-top: 100px; 
+    }
+
+    .nav {
+        gap: 15px;
+    }
+
+    .phone-row {
+        grid-template-columns: 1fr; 
+    }
+    
+    .gender-row {
+        flex-wrap: wrap; 
+    }
+
+    .sidebar {
+        width: 100%; 
+    }
+    
+    .modal-content {
+        width: 95%; 
+        margin: 10px;
+        padding: 15px;
+    }
 }

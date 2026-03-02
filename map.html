@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!-- Сторінка мапи запитів допомоги з панеллю деталей, прийняттям і скасуванням запитів. -->
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
@@ -12,7 +11,7 @@
 <body>
     <header class="topbar">
         <div class="topbar-inner">
-        <div class="logo">LOGO</div>
+        <div class="logo">HelpHub</div>
         <nav class="nav">
             <a href="/">Головна</a>
             <a href="/create_request">Зробити запит</a>
@@ -33,8 +32,8 @@
 
     <p><b>Статус:</b> <span id="detail-status"></span></p>
 
-    <button onclick="acceptRequest()">Прийняти</button>
-    <button onclick="cancelRequest()">Скасувати</button>
+    <button id="acceptBtn" onclick="acceptRequest()">Прийняти</button>
+    <button id="cancelBtn" onclick="cancelRequest()">Скасувати</button>
     <button id="contactsBtn" onclick="showContacts()" style="display:none;">
         Показати контакти
     </button>
