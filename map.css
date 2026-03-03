@@ -7,24 +7,136 @@ html, body {
 
 #map {
     width: 100%;
-    height: 100vh;
+    height: calc(100vh - 72px);
+    margin-top: 72px;
 }
 
 .sidebar {
     position: fixed;
-    top: 0;
+    top: 72px;
     right: -400px;
     width: 350px;
-    height: 100vh;
+    height: calc(100vh - 72px);
     background: white;
     box-shadow: -4px 0 15px rgba(0,0,0,0.2);
     padding: 20px;
     transition: 0.3s;
     z-index: 1000;
+    overflow-y: auto;
 }
 
 .sidebar.active {
     right: 0;
+}
+
+.sidebar-left {
+    right: auto;
+    left: -400px;
+    box-shadow: 4px 0 15px rgba(0,0,0,0.2);
+}
+
+.sidebar-left.active {
+    left: 0;
+}
+
+.open-complaints-btn {
+    position: fixed;
+    top: 86px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1001;
+
+    border: none;
+    border-radius: 8px;
+    width: 350px;
+    padding: 12px 14px;
+    background: #dbe5f9;
+    color: #465064;
+    cursor: pointer;
+    text-align: center;
+}
+
+.close-complaints-btn {
+    position: fixed;
+    top: 86px;
+    left: 350px;
+    z-index: 1001;
+    border: none;
+    border-radius: 0 0 8px 8px;
+    padding: 12px 16px;
+    background: #f5d8d8;
+    color: #7b2b2b;
+    cursor: pointer;
+}
+
+.open-user-admin-btn {
+    position: fixed;
+    top: 136px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1001;
+
+    border: none;
+    border-radius: 8px;
+    width: 350px;
+    padding: 12px 16px;
+    background: #dbe5f9;
+    color: #465064;
+    cursor: pointer;
+}
+
+.user-admin-panel {
+    position: fixed;
+    top: 128px;
+    left: 360px;
+    z-index: 1001;
+    width: min(720px, calc(100vw - 380px));
+    background: #ffffff;
+    border: 1px solid #d8deeb;
+    border-radius: 10px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+    padding: 12px;
+    display: none;
+}
+
+.user-admin-panel.active {
+    display: block;
+}
+
+.user-admin-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.user-admin-row input,
+.user-admin-row select {
+    height: 40px;
+    border: 1px solid #cfd7e8;
+    border-radius: 8px;
+    padding: 0 10px;
+}
+
+.user-admin-row button {
+    border: none;
+    border-radius: 8px;
+    padding: 0 12px;
+    background: #dbe5f9;
+    color: #465064;
+    cursor: pointer;
+}
+
+.user-admin-row .danger-btn {
+    background: #f5d8d8;
+    color: #7b2b2b;
+}
+
+.user-search-result {
+    min-height: 18px;
+    margin-bottom: 10px;
+    color: #3e4653;
+    font-size: 14px;
 }
 
 .close-btn {
@@ -51,8 +163,83 @@ html, body {
     background: #27ae60;
 }
 
+.complaints-list {
+    margin-top: 12px;
+    display: grid;
+    gap: 10px;
+}
+
+.complaint-card {
+    border: 1px solid #d8deeb;
+    border-radius: 8px;
+    padding: 12px;
+    background: #f7f9ff;
+}
+
+.complaint-card p {
+    margin: 5px 0;
+    word-break: break-word;
+}
+
+.complaint-delete-btn {
+    margin-top: 8px;
+    width: 100%;
+    border: none;
+    border-radius: 8px;
+    padding: 9px;
+    background: #f5d8d8;
+    color: #7b2b2b;
+    cursor: pointer;
+}
+
+.complaint-delete-btn:hover {
+    background: #efc9c9;
+}
+
+#sidebar button {
+    width: 100%;
+    margin-top: 10px;
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    cursor: pointer;
+    background: #dbe5f9;
+    color: #465064;
+}
+
 @media (max-width: 768px) {
     .sidebar {
         width: 100%;
+        right: -100%;
+    }
+
+    .sidebar-left {
+        left: -100%;
+    }
+
+    .open-complaints-btn {
+        width: 100%;
+        left: 0;
+    }
+
+    .open-user-admin-btn {
+        top: 130px;
+        left: 0;
+        width: 100%;
+        border-radius: 0;
+    }
+
+    .close-complaints-btn {
+        top: 172px;
+        left: 0;
+        width: 100%;
+        border-radius: 0;
+    }
+
+    .user-admin-panel {
+        top: 172px;
+        left: 0;
+        width: 100%;
+        border-radius: 0;
     }
 }

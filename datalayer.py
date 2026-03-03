@@ -104,5 +104,29 @@ def find_user_by_credentials(email: str, password: str) -> Optional[Dict[str, st
         return None
 
     return dict(row)
+def get_user_by_email(email: str) -> Optional[Dict[str, str]]:
+    target = email.strip().lower()
+    with _get_connection() as conn:
+        row = conn.execute(
+            """
+            SELECT surname, name, patronymic, gender, phone_code, phone, email
+            FROM users
+            WHERE lower(email) = ?
+            LIMIT 1
+            """,
+            (target,),
+        ).fetchone()
+    return dict(row) if row is not None else None
+
+
+def delete_user_by_email(email: str) -> bool:
+    target = email.strip().lower()
+    with _get_connection() as conn:
+        cur = conn.execute(
+            "DELETE FROM users WHERE lower(email) = ?",
+            (target,),
+        )
+        conn.commit()
+    return cur.rowcount > 0
 
 _init_db()

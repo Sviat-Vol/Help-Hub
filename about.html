@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Про нас | HelpHub</title>
+    <link rel="stylesheet" href="/static/globals.css?v=20260302-1" />
+    <link rel="stylesheet" href="/static/style2.css?v=20260302-1" />
+</head>
+<body>
+<header class="topbar">
+    <div class="topbar-inner">
+        <div class="logo">HelpHub</div>
+
+        <div class="right-menu">
+            <nav class="nav">
+                <a href="/">Головна</a>
+                <a href="/create_request">Зробити запит</a>
+                <a href="/map">Мапа потреб</a>
+            </nav>
+
+            <div class="auth-buttons">
+                {% if user %}
+                    <div class="profile-wrapper">
+                        <div class="profile-icon" onclick="toggleDropdown()">
+                            {{ user[0]|upper }}
+                        </div>
+
+                        <div id="profileDropdown" class="profile-dropdown">
+                            <div class="profile-email">{{ user }}</div>
+                            <a href="/logout" class="logout-btn">Вийти</a>
+                        </div>
+                    </div>
+                {% else %}
+                    <a href="/register" class="btn btn-outline">Реєстрація</a>
+                    <a href="/login" class="btn btn-primary">Вхід</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</header>
+
+<section class="hero small-hero">
+    <div class="hero-content">
+        <div class="hero-card">
+            <div class="hero-header">
+                <h2>Про наш проєкт</h2>
+                <div class="line-separator"></div>
+            </div>
+            <p>
+                HelpHub — це платформа взаємної допомоги, створена для того,
+                щоб об’єднувати людей поруч та робити підтримку доступною для кожного.
+            </p>
+        </div>
+    </div>
+</section>
+
+<section class="about-section extended">
+    <div class="about-block">
+        <h3>Наша мета</h3>
+        <p>
+            Ми прагнемо створити простір, де кожен може швидко отримати допомогу або надати її.
+            Наша система дозволяє розміщувати запити на мапі,
+            щоб люди поблизу могли оперативно відгукнутись.
+        </p>
+    </div>
+
+    <div class="about-block">
+        <h3>Для кого цей проєкт?</h3>
+        <p>
+            Для студентів, людей похилого віку, сімей,
+            волонтерів та всіх, хто опинився у складній ситуації.
+            Платформа створена для реальної взаємодії між людьми.
+        </p>
+    </div>
+
+    <div class="about-block">
+        <h3>Цінності</h3>
+        <p>
+            Довіра. Відкритість. Підтримка.
+            Ми віримо, що навіть маленька допомога може змінити чиюсь історію.
+        </p>
+    </div>
+</section>
+
+<section class="team-section">
+    <h2 class="team-title">Наша команда</h2>
+
+    <div class="team-grid">
+        <div class="team-card">
+            <img src="/static/img/team1.jpg" alt="Фото учасника">
+            <p class="team-name">Ім’я Прізвище</p>
+        </div>
+
+        <div class="team-card">
+            <img src="/static/img/team2.jpg" alt="Фото учасника">
+            <p class="team-name">Ім’я Прізвище</p>
+        </div>
+
+        <div class="team-card">
+            <img src="/static/img/team3.jpg" alt="Фото учасника">
+            <p class="team-name">Ім’я Прізвище</p>
+        </div>
+
+        <div class="team-card">
+            <img src="/static/img/team4.jpg" alt="Фото учасника">
+            <p class="team-name">Ім’я Прізвище</p>
+        </div>
+    </div>
+</section>
+
+<script>
+function toggleDropdown() {
+    const dropdown = document.getElementById("profileDropdown");
+    dropdown.classList.toggle("show");
+}
+</script>
+
+</body>
+</html>
