@@ -1,6 +1,6 @@
 fastapi
 uvicorn
 jinja2
+python-multipart
 sqlalchemy
 passlib[bcrypt]
-python-multipart
