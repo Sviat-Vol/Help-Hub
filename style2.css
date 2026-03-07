@@ -112,7 +112,7 @@ body {
     align-items: center;
     justify-content: flex-end;
     padding: 40px;
-    background-image: url("/static/img/back.jpg");
+    background-image: url("/static/back.jpg");
     background-size: cover;
     background-position: center;
 }

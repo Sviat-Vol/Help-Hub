@@ -371,14 +371,14 @@ class AppFactory:
         self.request_service = RequestService(self.db)
 
         self.app = FastAPI()
-        self.templates = Jinja2Templates(directory="templates")
+        self.templates = Jinja2Templates(directory=".")
         self.complaint_service = ComplaintService(COMPLAINTS_DB_PATH)
         self._configure()
 
     def _configure(self):
         secret_key = os.getenv("SECRET_KEY", os.urandom(32))
         self.app.add_middleware(SessionMiddleware, secret_key=secret_key)
-        self.app.mount("/static", StaticFiles(directory="static"), name="static")
+        self.app.mount("/static", StaticFiles(directory="."), name="static")
         self._register_routes()
 
     def require_login(self, request: Request):
