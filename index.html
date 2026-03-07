@@ -100,6 +100,14 @@
             </div>
         </section>
 <script>
+const burger = document.querySelector(".burger-menu");
+const nav = document.querySelector(".nav");
+const auth = document.querySelector(".auth-buttons");
+
+burger.addEventListener("click", () => {
+    nav.classList.toggle("active");
+    auth.classList.toggle("active");
+});
 function toggleDropdown() {
     const dropdown = document.getElementById("profileDropdown");
     dropdown.classList.toggle("show");
