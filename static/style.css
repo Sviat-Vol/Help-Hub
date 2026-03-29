@@ -1,0 +1,13 @@
+.box {
+    width: 1600px;
+    height: 132px;
+}
+
+.box .rectangle {
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    height: 132px;
+    object-fit: cover;
+}
